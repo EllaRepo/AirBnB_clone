@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 """Defines unittests for models/engine/file_storage.py.
-Unittest classes:
-    TestFileStorage_instantiation
-    TestFileStorage_methods
+    Unittest classes:
+        TestFileStorage_instantiation
+        TestFileStorage_methods
 """
 import os
 import json
@@ -11,6 +11,7 @@ import unittest
 from datetime import datetime
 from models.base_model import BaseModel
 from models.engine.file_storage import FileStorage
+from models import storage
 from models.user import User
 from models.state import State
 from models.place import Place
@@ -20,30 +21,44 @@ from models.review import Review
 
 
 class TestFileStorage_instantiation(unittest.TestCase):
-    """Unittests for testing instantiation of the FileStorage class."""
+    """Unittests for testing instantiation of the FileStorage class.
+    """
 
     def test_FileStorage_instantiation_no_args(self):
+        """Test for FileStorage instantiation with no args
+        """
         self.assertEqual(type(FileStorage()), FileStorage)
 
     def test_FileStorage_instantiation_with_arg(self):
+        """Test for FileStorage instantiation with args
+        """
         with self.assertRaises(TypeError):
             FileStorage(None)
 
     def test_FileStorage_file_path_is_private_str(self):
+        """Test for FileStorage file_path attribute type
+        """
         self.assertEqual(str, type(FileStorage._FileStorage__file_path))
 
     def testFileStorage_objects_is_private_dict(self):
+        """Test for FileStorage objects attribute type
+        """
         self.assertEqual(dict, type(FileStorage._FileStorage__objects))
 
     def test_storage_initializes(self):
+        """Test for storage initialization
+        """
         self.assertEqual(type(models.storage), FileStorage)
 
 
 class TestFileStorage_methods(unittest.TestCase):
-    """Unittests for testing methods of the FileStorage class."""
+    """Unittests for testing methods of the FileStorage class.
+    """
 
     @classmethod
     def setUp(self):
+        """Test setup method
+        """
         try:
             os.rename("file.json", "tmp")
         except IOError:
@@ -51,6 +66,8 @@ class TestFileStorage_methods(unittest.TestCase):
 
     @classmethod
     def tearDown(self):
+        """Test teardown method
+        """
         try:
             os.remove("file.json")
         except IOError:
@@ -62,13 +79,19 @@ class TestFileStorage_methods(unittest.TestCase):
         FileStorage._FileStorage__objects = {}
 
     def test_all(self):
+        """Test for all method
+        """
         self.assertEqual(dict, type(models.storage.all()))
 
     def test_all_with_arg(self):
+        """Test for all method with arg
+        """
         with self.assertRaises(TypeError):
             models.storage.all(None)
 
     def test_new(self):
+        """Test for new method
+        """
         bm = BaseModel()
         us = User()
         st = State()
@@ -99,14 +122,20 @@ class TestFileStorage_methods(unittest.TestCase):
         self.assertIn(rv, models.storage.all().values())
 
     def test_new_with_args(self):
+        """Test for new method with two args
+        """
         with self.assertRaises(TypeError):
             models.storage.new(BaseModel(), 1)
 
     def test_new_with_None(self):
+        """Test for new ,ethod with None arg
+        """
         with self.assertRaises(AttributeError):
             models.storage.new(None)
 
     def test_save(self):
+        """Test for save method
+        """
         bm = BaseModel()
         us = User()
         st = State()
@@ -134,10 +163,14 @@ class TestFileStorage_methods(unittest.TestCase):
             self.assertIn("Review." + rv.id, save_text)
 
     def test_save_with_arg(self):
+        """Test for save method with arg
+        """
         with self.assertRaises(TypeError):
             models.storage.save(None)
 
     def test_reload(self):
+        """Test for reload method
+        """
         bm = BaseModel()
         us = User()
         st = State()
@@ -164,9 +197,13 @@ class TestFileStorage_methods(unittest.TestCase):
         self.assertIn("Review." + rv.id, objs)
 
     def test_reload_no_file(self):
-        self.assertRaises(FileNotFoundError, models.storage.reload())
+        """Test for reload method with no file
+        """
+        self.assertIsNone(storage.reload())
 
     def test_reload_with_arg(self):
+        """Test for reload method with arg
+        """
         with self.assertRaises(TypeError):
             models.storage.reload(None)
 
